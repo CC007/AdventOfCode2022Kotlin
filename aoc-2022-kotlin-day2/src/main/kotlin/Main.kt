@@ -1,5 +1,3 @@
-import kotlin.math.round
-
 fun main() {
     val text = object {}.javaClass
         .getResource("input.txt")!!
@@ -14,13 +12,10 @@ fun main() {
         val opponentShape = Shape.fromOpponentCode(codes[0].first())
         val myShape = Shape.fromMyCode(codes[1].first())
         val roundScore = myShape.getScore(opponentShape)
-        println(roundScore)
         totalScore += roundScore
     }
 
-    println("Total: $totalScore")
-
-    println()
+    println("Total where XYZ are the shape choices: $totalScore")
 
     // 2b
     totalScore = 0
@@ -31,9 +26,8 @@ fun main() {
         val myResult = (codes[1].first() - 'V').toByte()
         val myShape = opponentShape.getOtherShape(myResult)
         val roundScore = myShape.getScore(opponentShape)
-        println(roundScore)
         totalScore += roundScore
     }
 
-    println("Total: $totalScore")
+    println("Total where XYZ mean lose, draw and win: $totalScore")
 }
