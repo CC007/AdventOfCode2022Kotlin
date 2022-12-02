@@ -9,11 +9,11 @@ enum class Shape(val opponentCode: Char, val myCode: Char, val value: Byte) {
 
     companion object {
         fun fromMyCode(myCode: Char): Shape {
-            return values().first { shape -> shape.myCode.equals(myCode) }
+            return values().first { with(it.myCode, myCode::equals) }
         }
 
         fun fromOpponentCode(opponentCode: Char): Shape {
-            return values().first { shape -> shape.opponentCode.equals(opponentCode) }
+            return values().first { with(it.opponentCode, opponentCode::equals) }
         }
     }
 }
