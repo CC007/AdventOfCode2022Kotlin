@@ -4,10 +4,12 @@ enum class Shape(val opponentCode: Char, val myCode: Char, val value: Byte) {
     SCISSORS('C', 'Z', 3);
 
     fun getScore(other: Shape): Int {
-        return Math.floorMod(getResult(other) + 1, 3) * 3 + this.value
+        return (getResult(other) + 1) * 3 + this.value
     }
+
     fun getResult(other: Shape): Int {
-        return this.value - other.value
+        val shiftedResult = Math.floorMod(this.value - other.value + 1, 3) // 0, 1 or 2
+        return shiftedResult - 1 // -1, 0 or 1
     }
 
     fun getOtherShape(otherResult: Byte): Shape {
