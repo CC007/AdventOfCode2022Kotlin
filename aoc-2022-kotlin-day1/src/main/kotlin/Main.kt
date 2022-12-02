@@ -2,7 +2,7 @@ import java.util.PriorityQueue
 
 fun main() {
     val text = object {}.javaClass
-        .getResource("inputExample.txt")!!
+        .getResource("input.txt")!!
         .readText()
         .split("\n")
     val elfCalories = PriorityQueue<Int> { a, b -> b - a }
