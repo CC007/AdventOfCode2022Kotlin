@@ -18,6 +18,7 @@
 
     <modules>
         <module>aoc-2022-kotlin-day1</module>
+        <module>aoc-2022-kotlin-day2</module>
     </modules>
 
 </project>
