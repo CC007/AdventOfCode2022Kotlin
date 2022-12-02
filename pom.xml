@@ -11,6 +11,11 @@
     <packaging>pom</packaging>
     <name>Advent of Code 2022 Kotlin - parent</name>
 
+    <properties>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+    </properties>
+
     <modules>
         <module>aoc-2022-kotlin-day1</module>
     </modules>

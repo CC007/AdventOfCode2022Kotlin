@@ -1,10 +1,11 @@
-import java.io.File
+import java.util.PriorityQueue
 
-fun main(args: Array<String>) {
-    val text = object {}.javaClass.getResource("inputExample.txt")!!
+fun main() {
+    val text = object {}.javaClass
+        .getResource("inputExample.txt")!!
         .readText()
         .split("\n")
-    val elfCalories = arrayListOf<Int>()
+    val elfCalories = PriorityQueue<Int> { a, b -> b - a }
     var elfCalory = 0
     for (line in text) {
         if (line.isEmpty()) {
@@ -16,5 +17,11 @@ fun main(args: Array<String>) {
     }
 
     println("Amount of elves: ${elfCalories.size}")
-    println("Amount of most calories: ${elfCalories.max()}")
+    val first = elfCalories.poll()
+    val second = elfCalories.poll()
+    val third = elfCalories.poll()
+    println("Amount of most calories: $first")
+    println("Amount of 2nd most calories: $second")
+    println("Amount of 3rd most calories: $third")
+    println("Amount of three most calories: ${first + second + third}")
 }
