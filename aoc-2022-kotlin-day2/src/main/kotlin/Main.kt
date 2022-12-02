@@ -2,7 +2,7 @@ import kotlin.math.round
 
 fun main() {
     val text = object {}.javaClass
-        .getResource("inputExample.txt")!!
+        .getResource("input.txt")!!
         .readText()
         .split("\n")
 
