@@ -44,11 +44,9 @@ fun main() {
 }
 
 private fun getPriority(intersection: Char): Int {
-    val priority: Int;
-    if (intersection - 'a' >= 0) {
-        priority = intersection - 'a' + 1
+    return if (intersection - 'a' >= 0) {
+        intersection - 'a' + 1
     } else {
-        priority = intersection - 'A' + 27
+        intersection - 'A' + 27
     }
-    return priority
 }
