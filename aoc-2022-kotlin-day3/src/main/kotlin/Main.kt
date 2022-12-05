@@ -29,8 +29,8 @@ fun main() {
         elfGroups[elfNr] = line;
 
         if (elfNr == 2) {
-            val asIterable = elfGroups.map(CharSequence::toSet)
-            val groupIntersection = asIterable[0].intersect(asIterable[1]).intersect(asIterable[2])
+            val elfGroupCharSets = elfGroups.map(CharSequence::toSet)
+            val groupIntersection = elfGroupCharSets[0].intersect(elfGroupCharSets[1]).intersect(elfGroupCharSets[2])
             logger.debug("gi: $groupIntersection")
             val groupPriority = getPriority(groupIntersection.first())
             logger.debug("gp: $groupPriority")
