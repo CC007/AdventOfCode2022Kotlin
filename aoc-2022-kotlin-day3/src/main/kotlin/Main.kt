@@ -10,7 +10,7 @@ fun main() {
 
     var prioritySum = 0
     var groupPrioritySum = 0
-    var elfNr = 0;
+    var elfNr = 0
     val elfGroups = arrayListOf("", "", "")
     for (line in text) {
         if (line.isEmpty()) break
@@ -26,7 +26,7 @@ fun main() {
         prioritySum += priority
 
         //3b
-        elfGroups[elfNr] = line;
+        elfGroups[elfNr] = line
 
         if (elfNr == 2) {
             val elfGroupCharSets = elfGroups.map(CharSequence::toSet)
@@ -36,7 +36,7 @@ fun main() {
             logger.debug("gp: $groupPriority")
             groupPrioritySum += groupPriority
         }
-        elfNr = (elfNr + 1) % 3;
+        elfNr = (elfNr + 1) % 3
     }
 
     logger.info("Priority sum: $prioritySum")
