@@ -6,14 +6,14 @@ fun main() {
         .readText()
         .split("\n")
     val elfCalories = PriorityQueue<Int> { a, b -> b - a }
-    var elfCalory = 0
+    var elfCalorie = 0
     for (line in text) {
         if (line.isEmpty()) {
-            elfCalories.add(elfCalory)
-            elfCalory = 0
+            elfCalories.add(elfCalorie)
+            elfCalorie = 0
             continue
         }
-        elfCalory += line.toInt()
+        elfCalorie += line.toInt()
     }
 
     println("Amount of elves: ${elfCalories.size}")
