@@ -6,7 +6,7 @@ fun main() {
     val text = object {}.javaClass
         .getResource("input.txt")!!
         .readText()
-        .split("\n")
+        .lines()
 
     var fullyContainedCount = 0
     var overlapCount = 0

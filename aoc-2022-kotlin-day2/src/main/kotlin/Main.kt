@@ -2,7 +2,7 @@ fun main() {
     val text = object {}.javaClass
         .getResource("input.txt")!!
         .readText()
-        .split("\n")
+        .lines()
 
     // 2a
     var totalScore = 0

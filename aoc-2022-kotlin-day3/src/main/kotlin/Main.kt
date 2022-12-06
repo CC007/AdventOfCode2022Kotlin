@@ -6,7 +6,7 @@ fun main() {
     val text = object {}.javaClass
         .getResource("input.txt")!!
         .readText()
-        .split("\n")
+        .lines()
 
     var prioritySum = 0
     var groupPrioritySum = 0

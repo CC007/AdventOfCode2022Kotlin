@@ -4,7 +4,8 @@ fun main() {
     val text = object {}.javaClass
         .getResource("input.txt")!!
         .readText()
-        .split("\n")
+        .lines()
+    
     val elfCalories = PriorityQueue<Int> { a, b -> b - a }
     var elfCalorie = 0
     for (line in text) {
