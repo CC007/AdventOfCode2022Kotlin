@@ -14,14 +14,28 @@ fun main() {
     val parsed = Parser(text).parseInput()
     logger.debug(parsed.toString())
     visit(parsed, { it is Dir }) {
-        logger.info("${it.name}: ${it.getTotalSize()}")
+        logger.debug("${it.name}: ${it.getTotalSize()}")
     }
 
+    //7a
     var totalSizeUnder100kSum = 0
     visit(parsed, { it is Dir && it.getTotalSize() < 100_000 }) {
         totalSizeUnder100kSum += it.getTotalSize()
     }
     logger.info("Total size of dirs < 100k: $totalSizeUnder100kSum")
+    
+    //7b
+    val unused = 70_000_000 - parsed.getTotalSize()
+    logger.debug("Unused: $unused")
+    val sizeToFree = 30_000_000 - unused
+    logger.debug("Amount of space that needs to be freed up: $sizeToFree")
+    
+    val availableDirsToFree = arrayListOf<Path>()
+    visit(parsed, { it is Dir && it.getTotalSize() > sizeToFree }) {
+        availableDirsToFree.add(it)
+    }
+    val smallestDirToFree = availableDirsToFree.minBy { it.getTotalSize() }
+    logger.info("Smallest dir to delete to free enough space: ${smallestDirToFree.name} (size: ${smallestDirToFree.getTotalSize()})")
 }
 
 fun visit(path: Path, criteria: Predicate<Path>, action: Consumer<Path>) {
