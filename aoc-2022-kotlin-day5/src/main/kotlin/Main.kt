@@ -9,12 +9,12 @@ fun main() {
         .readText()
         .lines()
 
-    var cargoSection = true
+    var suppliesSection = true
     val supplies = arrayListOf<ArrayDeque<Char>>()
     for (line in text) {
-        if (cargoSection) {
+        if (suppliesSection) {
             if (line.isEmpty()) {
-                cargoSection = false
+                suppliesSection = false
                 logger.debug(supplies.toString())
                 continue
             }
@@ -26,10 +26,6 @@ fun main() {
         }
     }
     logger.info("Top crates: ${getTopCrates(supplies)}")
-}
-
-fun getTopCrates(supplies: java.util.ArrayList<ArrayDeque<Char>>): String {
-    return supplies.map { it.pop() }.joinToString("")
 }
 
 private fun registerCrates(line: String, supplies: ArrayList<ArrayDeque<Char>>) {
@@ -59,7 +55,10 @@ private fun rearrangeCrates(line: String, supplies: ArrayList<ArrayDeque<Char>>)
         supplies[to - 1].push(supplies[from - 1].pop())
         logger.debug(supplies.toString())
     }
+}
 
+private fun getTopCrates(supplies: java.util.ArrayList<ArrayDeque<Char>>): String {
+    return supplies.map { it.pop() }.joinToString("")
 }
 
 private fun <T> arrayDequeOf(vararg elements: T) = ArrayDeque(elements.toList())
