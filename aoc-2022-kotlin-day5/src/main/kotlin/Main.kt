@@ -48,15 +48,14 @@ private fun registerCrates(line: String, supplies: ArrayList<ArrayDeque<Char>>) 
 
 private fun rearrangeCrates(line: String, supplies: ArrayList<ArrayDeque<Char>>) {
     logger.debug(line)
-    val (count, from, to) = "move (\\d)+ from (\\d)+ to (\\d)+".toRegex()
+    val (count, from, to) = "move (\\d+) from (\\d+) to (\\d+)".toRegex()
         .find(line)!!
         .groupValues
         .drop(1)
+        .onEach { logger.debug(it) }
         .map { it.toInt() }
-
-    logger.debug("Before: ${supplies.toString()}")
+    logger.debug(supplies.toString())
     for (i in 0 until count) {
-        logger.debug(i.toString())
         supplies[to - 1].push(supplies[from - 1].pop())
         logger.debug(supplies.toString())
     }
