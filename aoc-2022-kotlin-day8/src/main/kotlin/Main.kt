@@ -16,28 +16,77 @@ fun main() {
         trees.add(line.toList().map { it.digitToInt() })
     }
     logger.debug(trees.toString())
+    logger.info("Total trees visible: ${calculateTotalVisible(trees)}")
+    logger.debug("")
+    logger.info("Highest scenic score: ${calculateHighestScenicScore(trees)}")
 
+
+}
+
+//8a
+private fun calculateTotalVisible(trees: List<List<Int>>): Int {
     // Start with outer visible trees
     var totalVisible = 2 * trees.size + 2 * trees[0].size - 4
-    
+
     // Calculate how many trees are visible in the inner rings
+    traverseInnerGrid(trees, { tree: Int, left: List<Int>, right: List<Int>, top: List<Int>, bottom: List<Int> ->
+        tree > left.max() || tree > right.max() || tree > top.max() || tree > bottom.max()
+    }, { resultRow: MutableList<Boolean> ->
+        logger.debug(resultRow.joinToString(" ") { it.toString()[0].uppercase() })
+        totalVisible += resultRow.filter { it }.count()
+    })
+    return totalVisible
+}
+
+//8b
+private fun calculateHighestScenicScore(trees: List<List<Int>>): Int {
+    val scenicScores: MutableList<MutableList<Int>> = arrayListOf()
+    traverseInnerGrid(trees, { tree: Int, left: List<Int>, right: List<Int>, top: List<Int>, bottom: List<Int> ->
+        logger.trace("")
+        score(tree, left.reversed()) * score(tree, right) * score(tree, top.reversed()) * score(tree, bottom)
+    }, { resultRow: MutableList<Int> ->
+        logger.debug(resultRow.joinToString(" "))
+        scenicScores.add(resultRow)
+    })
+    return scenicScores.map { it.max() }.max()
+}
+
+// Traverse the plot, except for the outer ring
+private fun <T> traverseInnerGrid(
+    trees: List<List<Int>>,
+    treeAction: (Int, List<Int>, List<Int>, List<Int>, List<Int>) -> T,
+    rowAction: (MutableList<T>) -> Unit,
+) {
     for (rowIdx in 1 until trees.size - 1) {
-        val result: MutableList<Boolean> = arrayListOf()
+        val resultRow: MutableList<T> = arrayListOf()
         for (colIdx in 1 until trees.size - 1) {
-            val cell = trees[rowIdx][colIdx]
+            val tree = trees[rowIdx][colIdx]
+
             val row = trees.row(rowIdx)
             val col = trees.col(colIdx)
+
             val left = row.subList(0, colIdx)
             val right = row.subList(colIdx + 1, row.size)
             val top = col.subList(0, rowIdx)
             val bottom = col.subList(rowIdx + 1, col.size)
-            val visible = cell > left.max() || cell > right.max() || cell > top.max() || cell > bottom.max()
-            result.add(visible)
-            totalVisible += if (visible) 1 else 0
+
+            val result = treeAction.invoke(tree, left, right, top, bottom)
+            resultRow.add(result)
         }
-        logger.debug(result.joinToString(" ") { it.toString()[0].uppercase() })
+        rowAction.invoke(resultRow)
     }
-    logger.info("Total trees visible: $totalVisible")
+}
+
+private fun score(tree: Int, otherTrees: List<Int>): Int {
+    logger.trace("Tree: $tree, other trees: $otherTrees")
+    var score = 0
+    while (score < otherTrees.size) {
+        val otherTree = otherTrees[score]
+        score++
+        if (tree <= otherTree) break
+    }
+    logger.trace("Score: $score")
+    return score
 }
 
 private fun <T> List<List<T>>.col(idx: Int) = this.map { it[idx] }
