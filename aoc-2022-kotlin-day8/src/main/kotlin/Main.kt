@@ -31,34 +31,34 @@ private fun calculateTotalVisible(trees: List<List<Int>>): Int {
     // Calculate how many trees are visible in the inner rings
     traverseInnerGrid(trees, { tree: Int, left: List<Int>, right: List<Int>, top: List<Int>, bottom: List<Int> ->
         tree > left.max() || tree > right.max() || tree > top.max() || tree > bottom.max()
-    }, { resultRow: MutableList<Boolean> ->
+    }, { resultRow: List<Boolean> ->
         logger.debug(resultRow.joinToString(" ") { it.toString()[0].uppercase() })
-        totalVisible += resultRow.filter { it }.count()
+        totalVisible += resultRow.count { it }
     })
     return totalVisible
 }
 
 //8b
 private fun calculateHighestScenicScore(trees: List<List<Int>>): Int {
-    val scenicScores: MutableList<MutableList<Int>> = arrayListOf()
+    val scenicScores: MutableList<List<Int>> = arrayListOf()
 
     // Calculate the scenic scores for trees in the inner rings 
     // Outer ring trees are always multiplied by 0, so skip those
     traverseInnerGrid(trees, { tree: Int, left: List<Int>, right: List<Int>, top: List<Int>, bottom: List<Int> ->
         logger.trace("")
         score(tree, left.reversed()) * score(tree, right) * score(tree, top.reversed()) * score(tree, bottom)
-    }, { resultRow: MutableList<Int> ->
+    }, { resultRow: List<Int> ->
         logger.debug(resultRow.joinToString(" "))
         scenicScores.add(resultRow)
     })
-    return scenicScores.map { it.max() }.max()
+    return scenicScores.maxOf { it.max() }
 }
 
 // Traverse the plot, except for the outer ring
 private fun <T> traverseInnerGrid(
     trees: List<List<Int>>,
     treeAction: (Int, List<Int>, List<Int>, List<Int>, List<Int>) -> T,
-    rowAction: (MutableList<T>) -> Unit,
+    rowAction: (List<T>) -> Unit,
 ) {
     for (rowIdx in 1 until trees.size - 1) {
         val resultRow: MutableList<T> = arrayListOf()
