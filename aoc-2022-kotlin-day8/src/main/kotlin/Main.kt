@@ -41,6 +41,9 @@ private fun calculateTotalVisible(trees: List<List<Int>>): Int {
 //8b
 private fun calculateHighestScenicScore(trees: List<List<Int>>): Int {
     val scenicScores: MutableList<MutableList<Int>> = arrayListOf()
+
+    // Calculate the scenic scores for trees in the inner rings 
+    // Outer ring trees are always multiplied by 0, so skip those
     traverseInnerGrid(trees, { tree: Int, left: List<Int>, right: List<Int>, top: List<Int>, bottom: List<Int> ->
         logger.trace("")
         score(tree, left.reversed()) * score(tree, right) * score(tree, top.reversed()) * score(tree, bottom)
