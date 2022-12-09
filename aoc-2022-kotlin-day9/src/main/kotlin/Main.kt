@@ -7,13 +7,15 @@ private val logger = KotlinLogging.logger {}
 
 fun main() {
     val text = object {}.javaClass
-        .getResource("inputExample.txt")!!
+        .getResource("inputExample2.txt")!!
         .readText()
         .lines()
 
     val tailHistory = hashSetOf<Pair<Int, Int>>()
-    var head = Pair(0, 0)
-    var tail = Pair(0, 0)
+    val longTailHistory = hashSetOf<Pair<Int, Int>>()
+    var head = 0 to 0
+    var tail = 0 to 0
+    val oneToNine = (1..9).map { 0 to 0 }.toMutableList() 
     tailHistory.add(tail)
     for (line in text) {
         if (line.isEmpty()) break
@@ -22,15 +24,27 @@ fun main() {
             .let { Direction.valueOf(it[0]) to it[1].toInt() }
         logger.debug("Move $distance in direction $direction")
 
-        for (i in 0 until distance) {
+        (0 until distance).forEach { _ ->
             head = getNewHead(head, direction)
+
+            //9a
             tail = getNewTail(tail, head)
             logger.debug("Head $head, tail: $tail")
             tailHistory.add(tail)
+
+            //9b
+            oneToNine[0] = getNewTail(oneToNine[0], head)
+            for (i in 1 until 9) {
+                oneToNine[i] = getNewTail(oneToNine[i], oneToNine[i-1])
+            }
+            logger.debug("Head $head, tail: $oneToNine")
+            longTailHistory.add(oneToNine[8])
         }
     }
     logGrid(tailHistory)
+    logGrid(longTailHistory)
     logger.info("Total positions visited by tail: ${tailHistory.count()}")
+    logger.info("Total positions visited by long tail: ${longTailHistory.count()}")
 }
 
 fun getNewHead(head: Pair<Int, Int>, direction: Direction): Pair<Int, Int> {
@@ -49,11 +63,12 @@ fun getNewTail(tail: Pair<Int, Int>, head: Pair<Int, Int>): Pair<Int, Int> {
 }
 
 private fun logGrid(tailHistory: HashSet<Pair<Int, Int>>) {
-    val gridSize = tailHistory.maxOf { it.first } to tailHistory.maxOf { it.second }
-    logger.debug(gridSize.toString())
-    for (i in gridSize.first downTo 0) {
+    val gridMax = tailHistory.maxOf { it.first } to tailHistory.maxOf { it.second }
+    val gridMin = tailHistory.minOf { it.first } to tailHistory.minOf { it.second }
+    logger.debug("Grid size: ${gridMax-gridMin} ($gridMin to $gridMax)")
+    for (i in gridMax.first downTo gridMin.first) {
         val row = arrayListOf<Char>()
-        for (j in 0..gridSize.second) {
+        for (j in gridMin.second..gridMax.second) {
             if (tailHistory.contains(i to j)) row.add('#')
             else row.add('.')
         }
