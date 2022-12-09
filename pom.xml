@@ -30,6 +30,7 @@
         <module>aoc-2022-kotlin-day6</module>
         <module>aoc-2022-kotlin-day7</module>
         <module>aoc-2022-kotlin-day8</module>
+        <module>aoc-2022-kotlin-day9</module>
     </modules>
 
     <repositories>
