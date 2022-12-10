@@ -7,7 +7,7 @@ private val logger = KotlinLogging.logger {}
 
 fun main() {
     val text = object {}.javaClass
-        .getResource("inputExample2.txt")!!
+        .getResource("input.txt")!!
         .readText()
         .lines()
 
