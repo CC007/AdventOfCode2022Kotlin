@@ -32,6 +32,7 @@
         <module>aoc-2022-kotlin-day8</module>
         <module>aoc-2022-kotlin-day9</module>
         <module>aoc-2022-kotlin-day10</module>
+        <module>aoc-2022-kotlin-day11</module>
     </modules>
 
     <repositories>
