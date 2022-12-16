@@ -31,7 +31,10 @@ fun main() {
         monkeys.map { it.items.joinToString(", ") }.forEachIndexed { idx, items ->  items.logDebug("Monkey $idx:") }
         logger.debug("")
     }
-    monkeys.map { it.inspectionCount }.forEachIndexed { idx, items ->  items.logDebug("Monkey $idx inspection count:") }
+    val inspectionCounts = monkeys.map { it.inspectionCount }
+    inspectionCounts.forEachIndexed { idx, items ->  items.logDebug("Monkey $idx inspection count:") }
+    val sortedInspectionCounts = inspectionCounts.sortedDescending()
+    logger.info("Monkey business: ${sortedInspectionCounts[0] * sortedInspectionCounts[1]}")
 }
 
 private fun getOperation(operationStr: String): (Int) -> Int {
