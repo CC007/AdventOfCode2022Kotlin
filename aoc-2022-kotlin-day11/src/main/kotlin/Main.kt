@@ -17,9 +17,21 @@ fun main() {
         val startingItems = startingItemsStr.substring(18).split(", ").map(String::toInt).logDebug()
         val operation = getOperation(operationStr)
         val test = getTest(testStr, trueStr, falseStr)
-        monkeys.add(Monkey(startingItems, operation, test))
+        monkeys.add(Monkey(startingItems.toMutableList(), operation, test))
         lineCounter += 7
     }
+    logger.debug("")
+
+    for (round in 1..20) {
+        for (monkey in monkeys) {
+            monkey.inspect()
+            monkey.test(monkeys)
+        }
+        round.logDebug("After round")
+        monkeys.map { it.items.joinToString(", ") }.forEachIndexed { idx, items ->  items.logDebug("Monkey $idx:") }
+        logger.debug("")
+    }
+    monkeys.map { it.inspectionCount }.forEachIndexed { idx, items ->  items.logDebug("Monkey $idx inspection count:") }
 }
 
 private fun getOperation(operationStr: String): (Int) -> Int {
@@ -29,8 +41,8 @@ private fun getOperation(operationStr: String): (Int) -> Int {
     val operation: (Int) -> Int = { old: Int ->
         performOperation(
             old,
-            operationRegexGroups["left"]!!.value,
             operationRegexGroups["operator"]!!.value,
+            operationRegexGroups["left"]!!.value,
             operationRegexGroups["right"]!!.value
         )
     }
@@ -45,11 +57,11 @@ fun getTest(testStr: String, trueStr: String, falseStr: String): (Int) -> Int {
 }
 
 private fun performOperation(old: Int, operator: String, left: String, right: String): Int {
-    when (operator) {
+    return when (operator) {
         "*" -> parseValue(left, old) * parseValue(right, old)
         "+" -> parseValue(left, old) + parseValue(right, old)
+        else -> 0
     }
-    return 1
 }
 
 fun parseValue(toParse: String, old: Int): Int {
@@ -57,13 +69,20 @@ fun parseValue(toParse: String, old: Int): Int {
     return toParse.toInt()
 }
 
-private inline fun <T> T.logDebug(prefix: String = ""): T {
+fun <T> T.logTrace(prefix: String = ""): T {
+    if (prefix.isEmpty()) logger.trace(this.toString())
+    else logger.trace("$prefix $this")
+    return this
+}
+
+fun <T> T.logDebug(prefix: String = ""): T {
     if (prefix.isEmpty()) logger.debug(this.toString())
     else logger.debug("$prefix $this")
     return this
 }
 
-private inline fun <T> T.logInfo(prefix: String = ""): T {
-    logger.info("$prefix$this")
+fun <T> T.logInfo(prefix: String = ""): T {
+    if (prefix.isEmpty()) logger.info(this.toString())
+    else logger.info("$prefix $this")
     return this
 }
