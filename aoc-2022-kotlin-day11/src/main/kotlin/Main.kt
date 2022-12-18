@@ -9,35 +9,46 @@ fun main() {
         .readText()
         .lines()
 
-    var lineCounter = 1
-    val monkeys = arrayListOf<Monkey>()
-    while (lineCounter < text.size) {
-        text.component5()
-        val (startingItemsStr, operationStr, testStr, trueStr, falseStr) = text.drop(lineCounter)
-        val startingItems = startingItemsStr.substring(18).split(", ").map(String::toInt).logDebug()
-        val operation = getOperation(operationStr)
-        val test = getTest(testStr, trueStr, falseStr)
-        monkeys.add(Monkey(startingItems.toMutableList(), operation, test))
-        lineCounter += 7
-    }
-    logger.debug("")
+    doRounds(text, 20, true)
+    doRounds(text, 10000, false)
+}
 
-    for (round in 1..20) {
+private fun doRounds(text: List<String>, rounds: Int, doDivide: Boolean) {
+    val monkeys = parseFile(text)
+    val moduloProduct = monkeys.map { it.modulo }.fold(1) { a, b -> a * b}.logDebug("Modulo product:")
+    for (round in 1..rounds) {
         for (monkey in monkeys) {
-            monkey.inspect()
+            monkey.inspect(doDivide)
             monkey.test(monkeys)
         }
         round.logDebug("After round")
-        monkeys.map { it.items.joinToString(", ") }.forEachIndexed { idx, items ->  items.logDebug("Monkey $idx:") }
+        monkeys.map { it.items.joinToString(", ") }.forEachIndexed { idx, items -> items.logDebug("Monkey $idx:") }
         logger.debug("")
     }
     val inspectionCounts = monkeys.map { it.inspectionCount }
-    inspectionCounts.forEachIndexed { idx, items ->  items.logDebug("Monkey $idx inspection count:") }
+    inspectionCounts.forEachIndexed { idx, items -> items.logDebug("Monkey $idx inspection count:") }
     val sortedInspectionCounts = inspectionCounts.sortedDescending()
-    logger.info("Monkey business: ${sortedInspectionCounts[0] * sortedInspectionCounts[1]}")
+    logger.info("Monkey business: ${sortedInspectionCounts[0].toLong() * sortedInspectionCounts[1].toLong()}")
 }
 
-private fun getOperation(operationStr: String): (Int) -> Int {
+private fun parseFile(text: List<String>): ArrayList<Monkey> {
+    var lineCounter = 1
+    val monkeys = arrayListOf<Monkey>()
+    while (lineCounter < text.size) {
+        val (startingItemsStr, operationStr, testStr, trueStr, falseStr) = text.drop(lineCounter)
+        val startingItems = startingItemsStr.substring(18).split(", ").map(String::toInt).logDebug()
+        val operation = getOperation(operationStr, testStr)
+        val test = getTest(testStr, trueStr, falseStr)
+        val modulo = testStr.substring(21).toInt()
+        monkeys.add(Monkey(startingItems.toMutableList(), operation, test, modulo))
+        lineCounter += 7
+    }
+    logger.debug("")
+    return monkeys
+}
+
+private fun getOperation(operationStr: String, testStr: String): (Int) -> Int {
+    val divisibleBy = testStr.substring(21).toInt().logDebug("Divisible by:")
     val operationRegex = " {2}Operation: new = (?<left>\\w+) (?<operator>.) (?<right>\\w+)".toRegex()
     val operationRegexGroups = operationRegex.matchEntire(operationStr)!!.groups
     "${operationRegexGroups["left"]!!.value} ${operationRegexGroups["operator"]!!.value} ${operationRegexGroups["right"]!!.value}".logDebug()
