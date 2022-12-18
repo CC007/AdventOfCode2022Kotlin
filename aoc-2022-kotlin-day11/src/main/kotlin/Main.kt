@@ -15,10 +15,11 @@ fun main() {
 
 private fun doRounds(text: List<String>, rounds: Int, doDivide: Boolean) {
     val monkeys = parseFile(text)
-    val moduloProduct = monkeys.map { it.modulo }.fold(1) { a, b -> a * b}.logDebug("Modulo product:")
+    val moduloProduct = monkeys.map { it.modulo }.fold(1) { a, b -> a * b }.logDebug("Modulo product:")
     for (round in 1..rounds) {
         for (monkey in monkeys) {
-            monkey.inspect(doDivide)
+            if (doDivide) monkey.inspect { it / 3 }
+            else monkey.inspect { it % moduloProduct }
             monkey.test(monkeys)
         }
         round.logDebug("After round")
@@ -36,8 +37,8 @@ private fun parseFile(text: List<String>): ArrayList<Monkey> {
     val monkeys = arrayListOf<Monkey>()
     while (lineCounter < text.size) {
         val (startingItemsStr, operationStr, testStr, trueStr, falseStr) = text.drop(lineCounter)
-        val startingItems = startingItemsStr.substring(18).split(", ").map(String::toInt).logDebug()
-        val operation = getOperation(operationStr, testStr)
+        val startingItems = startingItemsStr.substring(18).split(", ").map(String::toLong).logDebug()
+        val operation = getOperation(operationStr)
         val test = getTest(testStr, trueStr, falseStr)
         val modulo = testStr.substring(21).toInt()
         monkeys.add(Monkey(startingItems.toMutableList(), operation, test, modulo))
@@ -47,12 +48,11 @@ private fun parseFile(text: List<String>): ArrayList<Monkey> {
     return monkeys
 }
 
-private fun getOperation(operationStr: String, testStr: String): (Int) -> Int {
-    val divisibleBy = testStr.substring(21).toInt().logDebug("Divisible by:")
+private fun getOperation(operationStr: String): (Long) -> Long {
     val operationRegex = " {2}Operation: new = (?<left>\\w+) (?<operator>.) (?<right>\\w+)".toRegex()
     val operationRegexGroups = operationRegex.matchEntire(operationStr)!!.groups
     "${operationRegexGroups["left"]!!.value} ${operationRegexGroups["operator"]!!.value} ${operationRegexGroups["right"]!!.value}".logDebug()
-    val operation: (Int) -> Int = { old: Int ->
+    val operation = { old: Long ->
         performOperation(
             old,
             operationRegexGroups["operator"]!!.value,
@@ -63,14 +63,14 @@ private fun getOperation(operationStr: String, testStr: String): (Int) -> Int {
     return operation
 }
 
-fun getTest(testStr: String, trueStr: String, falseStr: String): (Int) -> Int {
+fun getTest(testStr: String, trueStr: String, falseStr: String): (Long) -> Int {
     val divisibleBy = testStr.substring(21).toInt().logDebug("Divisible by:")
     val ifTrue = trueStr.substring(29).toInt().logDebug("If true:")
     val ifFalse = falseStr.substring(30).toInt().logDebug("If false:")
-    return { value -> if (value % divisibleBy == 0) ifTrue else ifFalse }
+    return { value -> if (value % divisibleBy == 0L) ifTrue else ifFalse }
 }
 
-private fun performOperation(old: Int, operator: String, left: String, right: String): Int {
+private fun performOperation(old: Long, operator: String, left: String, right: String): Long {
     return when (operator) {
         "*" -> parseValue(left, old) * parseValue(right, old)
         "+" -> parseValue(left, old) + parseValue(right, old)
@@ -78,9 +78,9 @@ private fun performOperation(old: Int, operator: String, left: String, right: St
     }
 }
 
-fun parseValue(toParse: String, old: Int): Int {
-    if (toParse == "old") return old
-    return toParse.toInt()
+fun parseValue(unparsedValue: String, old: Long): Long {
+    if (unparsedValue == "old") return old
+    return unparsedValue.toLong()
 }
 
 fun <T> T.logTrace(prefix: String = ""): T {
