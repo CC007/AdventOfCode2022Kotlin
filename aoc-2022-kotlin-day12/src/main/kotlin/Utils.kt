@@ -39,22 +39,22 @@ fun String.formatPretty(indentSize: Int = 2, currentIndent: Int = 0): String {
     val squareBracesOpenMatch = squareBracesOpenRegex.matchEntire(this)
     val squareBracesCloseMatch = squareBracesCloseRegex.matchEntire(this)
     val commaMatch = commaRegex.matchEntire(this)
-    
+
     return (if (currentIndent == 0) "\n" else "") + when {
-        curlyBracesOpenMatch is MatchResult -> curlyBracesOpenMatch.groupValues[1] + "{" +
-                "\n$nextIndent" + curlyBracesOpenMatch.groupValues[2].formatPretty(indentSize, currentIndent + indentSize).trim(' ')
+        curlyBracesOpenMatch is MatchResult -> curlyBracesOpenMatch.groupValues[1] + "{" + "\n$nextIndent" +
+                curlyBracesOpenMatch.groupValues[2].formatPretty(indentSize, currentIndent + indentSize).trim(' ')
 
-        curlyBracesCloseMatch is MatchResult -> curlyBracesCloseMatch.groupValues[1] +
-                "\n$prevIndent" + "}" + curlyBracesCloseMatch.groupValues[2].formatPretty(indentSize, currentIndent - indentSize).trim(' ')
+        curlyBracesCloseMatch is MatchResult -> curlyBracesCloseMatch.groupValues[1] + "\n$prevIndent" + "}" +
+                curlyBracesCloseMatch.groupValues[2].formatPretty(indentSize, currentIndent - indentSize).trim(' ')
 
-        squareBracesOpenMatch is MatchResult -> squareBracesOpenMatch.groupValues[1] + "[" +
-                "\n$nextIndent" + squareBracesOpenMatch.groupValues[2].formatPretty(indentSize, currentIndent + indentSize).trim(' ')
+        squareBracesOpenMatch is MatchResult -> squareBracesOpenMatch.groupValues[1] + "[" + "\n$nextIndent" +
+                squareBracesOpenMatch.groupValues[2].formatPretty(indentSize, currentIndent + indentSize).trim(' ')
 
-        squareBracesCloseMatch is MatchResult -> squareBracesCloseMatch.groupValues[1] +
-                "\n$prevIndent" + "]" + squareBracesCloseMatch.groupValues[2].formatPretty(indentSize, currentIndent - indentSize).trim(' ')
+        squareBracesCloseMatch is MatchResult -> squareBracesCloseMatch.groupValues[1] + "\n$prevIndent" + "]" +
+                squareBracesCloseMatch.groupValues[2].formatPretty(indentSize, currentIndent - indentSize).trim(' ')
 
-        commaMatch is MatchResult -> commaMatch.groupValues[1] + "," +
-                "\n$indent" + commaMatch.groupValues[2].formatPretty(indentSize, currentIndent).trim(' ')
+        commaMatch is MatchResult -> commaMatch.groupValues[1] + "," + "\n$indent" +
+                commaMatch.groupValues[2].formatPretty(indentSize, currentIndent).trim(' ')
 
         else -> this
     }
