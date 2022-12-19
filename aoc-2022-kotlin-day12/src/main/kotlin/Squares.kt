@@ -10,11 +10,16 @@ class Square private constructor(
 
     val isStart by lazy { isStart(elevationChar) }
     val isEnd by lazy { isEnd(elevationChar) }
+    
+    val left by lazy { grid[pos.first].getOrNull(pos.second - 1) }
+    val right by lazy { grid[pos.first].getOrNull(pos.second + 1) }
+    val up by lazy { grid.getOrNull(pos.first - 1)?.get(pos.second) }
+    val down by lazy { grid.getOrNull(pos.first + 1)?.get(pos.second) }
 
-    val canMoveLeft by lazy { canMoveFromTo(this, grid[pos.first].getOrNull(pos.second - 1)) }
-    val canMoveRight by lazy { canMoveFromTo(this, grid[pos.first].getOrNull(pos.second + 1)) }
-    val canMoveUp by lazy { canMoveFromTo(this, grid.getOrNull(pos.first - 1)?.get(pos.second)) }
-    val canMoveDown by lazy { canMoveFromTo(this, grid.getOrNull(pos.first + 1)?.get(pos.second)) }
+    val canMoveLeft by lazy { canMoveFromTo(this, left) }
+    val canMoveRight by lazy { canMoveFromTo(this, right) }
+    val canMoveUp by lazy { canMoveFromTo(this, up) }
+    val canMoveDown by lazy { canMoveFromTo(this, down) }
 
     companion object {
         fun isStart(char: Char): Boolean {
