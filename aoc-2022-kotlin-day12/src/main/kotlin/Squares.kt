@@ -42,7 +42,7 @@ class Square private constructor(
     }
 
     override fun toString(): String {
-        return "{elevation: $elevation, is start: $isStart, is end: $isEnd, can move left: $canMoveLeft, can move right: $canMoveRight, can move up: $canMoveUp, can move down: $canMoveDown}"
+        return "{elevation: $elevation, row: ${pos.first}, col: ${pos.second}, is start: $isStart, is end: $isEnd, can move left: $canMoveLeft, can move right: $canMoveRight, can move up: $canMoveUp, can move down: $canMoveDown}"
     }
     
     class Grid private constructor(private val squares: List<List<Square>>) : List<List<Square>> by squares {
