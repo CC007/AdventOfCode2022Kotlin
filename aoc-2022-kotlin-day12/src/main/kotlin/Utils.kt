@@ -3,24 +3,48 @@ import kotlin.math.max
 
 inline fun <T> T.logTrace(prefix: String = ""): T {
     val logger = KotlinLogging.logger {}
-    if (prefix.isEmpty()) {
-        logger.trace(this.toString())
-    } else logger.trace("$prefix $this")
+    this.log(prefix, logger::trace)
+    return this
+}
+
+inline fun <T, F : () -> T> F.logTrace(prefix: String = ""): F {
+    val logger = KotlinLogging.logger {}
+    this.log(prefix, logger::trace)
     return this
 }
 
 inline fun <T> T.logDebug(prefix: String = ""): T {
     val logger = KotlinLogging.logger {}
-    if (prefix.isEmpty()) logger.debug(this.toString())
-    else logger.debug("$prefix $this")
+    this.log(prefix, logger::debug)
+    return this
+}
+
+inline fun <T, F : () -> T> F.logDebug(prefix: String = ""): F {
+    val logger = KotlinLogging.logger {}
+    this.log(prefix, logger::debug)
     return this
 }
 
 inline fun <T> T.logInfo(prefix: String = ""): T {
     val logger = KotlinLogging.logger {}
-    if (prefix.isEmpty()) logger.info(this.toString())
-    else logger.info("$prefix $this")
+    this.log(prefix, logger::info)
     return this
+}
+
+inline fun <T, F : () -> T> F.logInfo(prefix: String = ""): F {
+    val logger = KotlinLogging.logger {}
+    this.log(prefix, logger::info)
+    return this
+}
+
+inline fun <T> T.log(prefix: String, level: (() -> Any?) -> Unit) {
+    if (prefix.isEmpty()) level { this }
+    else level { "$prefix $this" }
+}
+
+inline fun <T, F : () -> T> F.log(prefix: String, level: (() -> Any?) -> Unit) {
+    if (prefix.isEmpty()) level { this() }
+    else level { "$prefix ${this()}" }
 }
 
 fun String.formatPretty(indentSize: Int = 2, currentIndent: Int = 0): String {
