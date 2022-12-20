@@ -74,7 +74,7 @@ class Square private constructor(
         }
 
         override fun toString(): String {
-            return "{Start: $start, end: $end, grid: $squares}"
+            return "{start: $start, end: $end, grid: $squares}"
         }
     }
 }

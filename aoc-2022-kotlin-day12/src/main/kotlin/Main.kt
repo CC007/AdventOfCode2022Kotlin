@@ -8,14 +8,14 @@ fun main() {
 
     "Parsing file".logDebug()
     val grid = parseFile(text)
-    grid.toString()::formatPretty[2, 0]//.logDebug()
+    grid.toString()::formatPretty[2, 0].logTrace();
     { grid.joinToString("\n") {
         it.map { it.elevation }.joinToString(" ") { "%2d".format(it) }
     }.let { "Elevation grid:\n$it" } }.logDebug()
 
     val shortestPaths: MutableMap<Square, Int> = mutableMapOf()
     grid.forEach { shortestPaths.putAll(it.map { it to Int.MAX_VALUE }) }
-    shortestPaths.toString()::formatPretty[2, 0]//.logTrace()
+    shortestPaths.toString()::formatPretty[2, 0].logTrace()
 
     "Calculating shortest paths".logDebug()
     var searchSpace: MutableList<Pair<Square, Int>> = arrayListOf(grid.end to 0)

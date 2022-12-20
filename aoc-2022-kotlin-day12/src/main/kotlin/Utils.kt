@@ -47,39 +47,61 @@ inline fun <T, F : () -> T> F.log(prefix: String, level: (() -> Any?) -> Unit) {
     else level { "$prefix ${this()}" }
 }
 
-fun String.formatPretty(indentSize: Int = 2, currentIndent: Int = 0): String {
-    val nextIndent = " ".repeat(currentIndent + indentSize)
-    val indent = " ".repeat(currentIndent)
-    val prevIndent = " ".repeat(max(currentIndent - indentSize, 0))
-
-    val curlyBracesOpenRegex = "([^\\[\\]{},]*)\\{(.*)".toRegex()
-    val curlyBracesCloseRegex = "([^\\[\\]{},]*)}(.*)".toRegex()
-    val squareBracesOpenRegex = "([^\\[\\]{},]*)\\[(.*)".toRegex()
-    val squareBracesCloseRegex = "([^\\[\\]{},]*)](.*)".toRegex()
-    val commaRegex = "([^\\[\\]{},]*),(.*)".toRegex()
-
-    val curlyBracesOpenMatch = curlyBracesOpenRegex.matchEntire(this)
-    val curlyBracesCloseMatch = curlyBracesCloseRegex.matchEntire(this)
-    val squareBracesOpenMatch = squareBracesOpenRegex.matchEntire(this)
-    val squareBracesCloseMatch = squareBracesCloseRegex.matchEntire(this)
-    val commaMatch = commaRegex.matchEntire(this)
-
-    return (if (currentIndent == 0) "\n" else "") + when {
-        curlyBracesOpenMatch is MatchResult -> curlyBracesOpenMatch.groupValues[1] + "{" + "\n$nextIndent" +
-                curlyBracesOpenMatch.groupValues[2].formatPretty(indentSize, currentIndent + indentSize).trim(' ')
-
-        curlyBracesCloseMatch is MatchResult -> curlyBracesCloseMatch.groupValues[1] + "\n$prevIndent" + "}" +
-                curlyBracesCloseMatch.groupValues[2].formatPretty(indentSize, currentIndent - indentSize).trim(' ')
-
-        squareBracesOpenMatch is MatchResult -> squareBracesOpenMatch.groupValues[1] + "[" + "\n$nextIndent" +
-                squareBracesOpenMatch.groupValues[2].formatPretty(indentSize, currentIndent + indentSize).trim(' ')
-
-        squareBracesCloseMatch is MatchResult -> squareBracesCloseMatch.groupValues[1] + "\n$prevIndent" + "]" +
-                squareBracesCloseMatch.groupValues[2].formatPretty(indentSize, currentIndent - indentSize).trim(' ')
-
-        commaMatch is MatchResult -> commaMatch.groupValues[1] + "," + "\n$indent" +
-                commaMatch.groupValues[2].formatPretty(indentSize, currentIndent).trim(' ')
-
-        else -> this
+fun String.formatPretty(indentSize: Int = 2, startingIndent: Int = 0): String {
+    var result = "\n"
+    var remaining = this to startingIndent
+    while (remaining.first.isNotEmpty()) {
+        val (remainingString, currentIndent) = remaining
+        val nextIndent = " ".repeat(currentIndent + indentSize)
+        val indent = " ".repeat(currentIndent)
+        val prevIndent = " ".repeat(max(currentIndent - indentSize, 0))
+        
+        val co = remainingString.split('{', limit = 2)
+        if (co.size == 2) {
+            val (head, tail) = co
+            if (!head.contains(".*[}\\[\\],].*".toRegex())) {
+                remaining = tail to (currentIndent + indentSize)
+                result += head.trim(' ') + "{" + "\n$nextIndent"
+                continue
+            }
+        }
+        val cc = remainingString.split('}', limit = 2)
+        if (cc.size == 2) {
+            val (head, tail) = cc
+            if (!head.contains(".*[{\\[\\],].*".toRegex())) {
+                remaining = tail to (currentIndent - indentSize)
+                result += head.trim(' ') + "\n$prevIndent" + "}"
+                continue
+            }
+        }
+        val so = remainingString.split('[', limit = 2)
+        if (so.size == 2) {
+            val (head, tail) = so
+            if (!head.contains(".*[{}\\],].*".toRegex())) {
+                remaining = tail to (currentIndent + indentSize)
+                result += head.trim(' ') + "[" + "\n$nextIndent"
+                continue
+            }
+        }
+        val sc = remainingString.split(']', limit = 2)
+        if (sc.size == 2) {
+            val (head, tail) = sc
+            if (!head.contains(".*[{}\\[,].*".toRegex())) {
+                remaining = tail to (currentIndent - indentSize)
+                result += head.trim(' ') + "\n$prevIndent" + "]"
+                continue
+            }
+        }
+        val c = remainingString.split(',', limit = 2)
+        if (c.size == 2) {
+            val (head, tail) = c
+            if (!head.contains(".*[{}\\[\\]].*".toRegex())) {
+                remaining = tail to (currentIndent)
+                result += head.trim(' ') + "," + "\n$indent"
+                continue
+            }
+        }
+        result += remainingString.trim(' ')
     }
-}
+    return result
+} 
