@@ -13,7 +13,7 @@ fun main() {
     grid.forEach { shortestPaths.putAll(it.map { it to Int.MAX_VALUE }) }
     shortestPaths.toString()::formatPretty[2, 0].logTrace()
 
-    var searchSpace: MutableList<Pair<Square, Int>> = arrayListOf(grid.start to 0)
+    var searchSpace: MutableList<Pair<Square, Int>> = arrayListOf(grid.end to 0)
     do {
         val (square, steps) = searchSpace.removeFirst()
         square.toString().formatPretty().logTrace("Current:")
@@ -21,14 +21,14 @@ fun main() {
             it.map { shortestPaths[it] }.joinToString(" ") { if (it == Int.MAX_VALUE) "inf" else "%3d".format(it) }
         }.let { "Steps: $steps, grid:\n$it" }.logTrace()
         if (steps < shortestPaths[square]!!) shortestPaths[square] = steps
-        if (square.canMoveLeft && shortestPaths[square.left]!! == Int.MAX_VALUE) searchSpace.add(square.left!! to (steps + 1))
-        if (square.canMoveRight && shortestPaths[square.right]!! == Int.MAX_VALUE) searchSpace.add(square.right!! to (steps + 1))
-        if (square.canMoveUp && shortestPaths[square.up]!! == Int.MAX_VALUE) searchSpace.add(square.up!! to (steps + 1))
-        if (square.canMoveDown && shortestPaths[square.down]!! == Int.MAX_VALUE) searchSpace.add(square.down!! to (steps + 1))
+        if (square.left?.canMoveRight == true && shortestPaths[square.left]!! == Int.MAX_VALUE) searchSpace.add(square.left!! to (steps + 1))
+        if (square.right?.canMoveLeft == true && shortestPaths[square.right]!! == Int.MAX_VALUE) searchSpace.add(square.right!! to (steps + 1))
+        if (square.up?.canMoveDown == true && shortestPaths[square.up]!! == Int.MAX_VALUE) searchSpace.add(square.up!! to (steps + 1))
+        if (square.down?.canMoveUp == true && shortestPaths[square.down]!! == Int.MAX_VALUE) searchSpace.add(square.down!! to (steps + 1))
         searchSpace = searchSpace.distinctBy { it.first }.toMutableList()
-    } while (square != grid.end)
+    } while (square != grid.start)
 
-    "Shortest path to end: ${shortestPaths[grid.end]}".logInfo()
+    "Shortest path to end: ${shortestPaths[grid.start]}".logInfo()
 }
 
 
