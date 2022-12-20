@@ -9,12 +9,28 @@ fun main() {
     "Parsing file".logDebug()
     val packetPairs = parseFile(text).logDebug("Packet pairs:")
 
+    //13a
     packetPairs.map { (left, right) -> left < right }
         .mapIndexed { index, rightOrder -> index + 1 to rightOrder }
         .logDebug("Correct packet order:")
         .filter { (_, rightOrder) -> rightOrder }
         .sumOf { (index, _) -> index }
         .logInfo("Sum of correctly ordered pair indices:")
+
+    //13b
+    val dividerPacket2 = ListValue(arrayListOf(ListValue(arrayListOf(IntegerValue(2)))))
+    val dividerPacket6 = ListValue(arrayListOf(ListValue(arrayListOf(IntegerValue(6)))))
+
+    listOf(dividerPacket2, dividerPacket6, *packetPairs.flatMap { it.toList() }.toTypedArray())
+        .sorted()
+        .also { "Ordered packets:".logDebug() }
+        .onEach { it.logDebug() }
+        .mapIndexed { index, packet -> index + 1 to packet }
+        .filter { (_, packet) -> packet == dividerPacket2 || packet == dividerPacket6 }
+        .logDebug("Divider packets:")
+        .map { (index, _) -> index }
+        .reduce { acc, i -> acc * i }
+        .logInfo("Decoder key:")
 }
 
 
