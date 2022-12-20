@@ -9,6 +9,9 @@ fun main() {
     "Parsing file".logDebug()
     val grid = parseFile(text)
     grid.toString()::formatPretty[2, 0]//.logDebug()
+    { grid.joinToString("\n") {
+        it.map { it.elevation }.joinToString(" ") { "%2d".format(it) }
+    }.let { "Elevation grid:\n$it" } }.logDebug()
 
     val shortestPaths: MutableMap<Square, Int> = mutableMapOf()
     grid.forEach { shortestPaths.putAll(it.map { it to Int.MAX_VALUE }) }
@@ -31,7 +34,7 @@ fun main() {
     } while (square != grid.start)
     { grid.joinToString("\n") {
         it.map { shortestPaths[it] }.joinToString(" ") { if (it == Int.MAX_VALUE) "inf" else "%3d".format(it) }
-    }.let { "Grid:\n$it" } }.logDebug()
+    }.let { "Shortest path grid:\n$it" } }.logDebug()
 
     //12a
     "Shortest path to end: ${shortestPaths[grid.start]}".logInfo()
