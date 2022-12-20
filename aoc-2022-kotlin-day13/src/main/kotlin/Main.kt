@@ -2,7 +2,7 @@ import utils.*
 
 fun main() {
     val text = object {}.javaClass
-        .getResource("inputExample.txt")!!
+        .getResource("input.txt")!!
         .readText()
         .lines()
 
