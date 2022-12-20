@@ -14,7 +14,7 @@ fun main() {
         .logDebug("Correct packet order:")
         .filter { (_, rightOrder) -> rightOrder }
         .sumOf { (index, _) -> index }
-        .logInfo()
+        .logInfo("Sum of correctly ordered pair indices:")
 }
 
 
