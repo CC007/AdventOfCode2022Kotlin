@@ -7,14 +7,13 @@ fun main() {
         .lines()
 
     val grid = parseFile(text)
-    grid.toString().formatPretty().logDebug()
+    grid.toString()::formatPretty[2, 0].logDebug()
 
-    val shortestPaths: MutableMap<Square, Int> = mutableMapOf<Square, Int>()
+    val shortestPaths: MutableMap<Square, Int> = mutableMapOf()
     grid.forEach { shortestPaths.putAll(it.map { it to Int.MAX_VALUE }) }
-    shortestPaths.toString().formatPretty().logTrace()
+    shortestPaths.toString()::formatPretty[2, 0].logTrace()
 
-    val searchSpace: MutableList<Pair<Square, Int>> = arrayListOf(grid.start to 0)
-
+    var searchSpace: MutableList<Pair<Square, Int>> = arrayListOf(grid.start to 0)
     do {
         val (square, steps) = searchSpace.removeFirst()
         square.toString().formatPretty().logTrace("Current:")
@@ -26,8 +25,9 @@ fun main() {
         if (square.canMoveRight && shortestPaths[square.right]!! == Int.MAX_VALUE) searchSpace.add(square.right!! to (steps + 1))
         if (square.canMoveUp && shortestPaths[square.up]!! == Int.MAX_VALUE) searchSpace.add(square.up!! to (steps + 1))
         if (square.canMoveDown && shortestPaths[square.down]!! == Int.MAX_VALUE) searchSpace.add(square.down!! to (steps + 1))
+        searchSpace = searchSpace.distinctBy { it.first }.toMutableList()
     } while (square != grid.end)
-    
+
     "Shortest path to end: ${shortestPaths[grid.end]}".logInfo()
 }
 
