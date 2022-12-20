@@ -6,7 +6,7 @@ class Square private constructor(
         private set
 
 
-    private val elevation by lazy { elevation(elevationChar) }
+    val elevation by lazy { elevation(elevationChar) }
 
     val isStart by lazy { isStart(elevationChar) }
     val isEnd by lazy { isEnd(elevationChar) }

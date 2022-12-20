@@ -29,6 +29,7 @@ fun main() {
     } while (square != grid.start)
 
     "Shortest path to end: ${shortestPaths[grid.start]}".logInfo()
+    "Shortest path to end from any a (pos ${shortestPaths.filter { it.key.elevation == 0 }.minBy { it.value }.let { "${it.key.pos}): ${it.value}"}}".logInfo()
 }
 
 
